@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace Task_1
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             // Переменные для работы с текстом
             string text = "";
@@ -28,7 +24,7 @@ namespace Task_1
 
             // Считывание запроса и перевод в нижний регистр
             string MainStr = fileRead.ReadLine().ToLower();
-           
+
             // Считывание текста
             string temp = fileRead.ReadLine();
             while (temp != null)
@@ -37,22 +33,28 @@ namespace Task_1
                 temp = fileRead.ReadLine();
             }
 
-            // Разбивка текста на слова по пробельным символам
+            // Разбиваем текст на слова по пробельным символам
             string[] arrWords = text.Split(ch, StringSplitOptions.RemoveEmptyEntries);
 
-            // Массив для пробельных символов
-            string[] arrSym = new string[200];
+            // Создаем копию для поиска пробельных символов
             copyText = text;
-            // В копии текста удаляем слова, сохраняя пробельные символы в массив
-            copyText = copyText.Remove(0, arrWords[0].Length);
-            for (int i = 1; i < arrWords.Length; i++)
+            // Если перед текстом есть пробельные символы, то запоминаем их
+            string sym = "";
+            index = copyText.IndexOf(arrWords[0]);
+            if (index != 0)
+                sym = copyText.Substring(0, index);
+            copyText = copyText.Substring(index);
+            // В копии текста удаляем слова, сохраняя пробельные символы
+            for (int i = 0; i < arrWords.Length; i++)
             {
-                index = copyText.IndexOf(arrWords[i][0]);
-                arrSym[i - 1] = copyText.Remove(index);
-                copyText = copyText.Remove(0, arrWords[i].Length + index);
+                index = copyText.IndexOf(arrWords[i]);
+                copyText = copyText.Substring(0, index) + '!' + copyText.Remove(0, arrWords[i].Length + index);
             }
-
-            // Соединяем слова в текст с пробелами
+            // Разбиваем пробельные символы по позициям
+            char[] lim = { '!' };
+            string[] arrSym = copyText.Split(lim, StringSplitOptions.RemoveEmptyEntries);
+      
+            // Соединяем слова в текст с одинарными пробелами
             text = string.Join(" ", arrWords);
             // Копию текста переводим в нижний регистр
             copyText = text.ToLower();
@@ -68,11 +70,10 @@ namespace Task_1
             // Разбиваем полученный основной текст по пробелам
             arrWords = text.Split(ch, StringSplitOptions.RemoveEmptyEntries);
             // Соединяем полученные слова с пробельными символами
-            text = arrWords[0];
-            for (int i = 1; i < arrWords.Length; i++)
-                text += arrSym[i - 1] + arrWords[i];
-            text += symEnter;
-      
+            text = sym;
+            for (int i = 0; i < arrWords.Length; i++)
+                text += arrWords[i] + arrSym[i];
+
             // Выводим ответ в файл
             index = text.IndexOf(symEnter);
             while (index != -1)
